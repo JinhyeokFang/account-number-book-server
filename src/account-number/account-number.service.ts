@@ -9,4 +9,20 @@ export class AccountNumberService {
         @InjectRepository(Account)
         private accountNumberRepository: Repository<Account>,
     ) {}
+
+    async create(account: Account): Promise<void> {
+        await this.accountNumberRepository.save(account);
+    }
+
+    async findAccount(id: string): Promise<Account> {
+        return this.accountNumberRepository.findOneBy({ id });
+    }
+
+    async findAllAccounts(kakaoId: string): Promise<Account[]> {
+        return this.accountNumberRepository.findBy({ kakaoId });
+    }
+
+    async remove(id: number): Promise<void> {
+        await this.accountNumberRepository.delete(id);
+    }
 }

@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { AccountNumberModule } from './account-number/account-number.module';
+import * as path from 'path';
 
 @Module({
     imports: [
@@ -18,17 +19,18 @@ import { AccountNumberModule } from './account-number/account-number.module';
         }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
-            useFactory: (configService: ConfigService) => {
-                return {
-                    type: 'mysql',
-                    host: configService.get('DB_HOST'),
-                    port: configService.get('DB_PORT'),
-                    username: configService.get('DB_USERNAME'),
-                    password: configService.get('DB_PASSWORD'),
-                    database: configService.get('DB_NAME'),
-                    synchronize: true,
-                };
-            },
+            useFactory: (configService: ConfigService) => ({
+                type: 'mysql',
+                host: configService.get('DB_HOST'),
+                port: configService.get('DB_PORT'),
+                username: configService.get('DB_USERNAME'),
+                password: configService.get('DB_PASSWORD'),
+                database: configService.get('DB_NAME'),
+                synchronize: true,
+                entities: [
+                    path.join(__dirname, 'entities', '*.entity{.ts,.js}'),
+                ],
+            }),
             inject: [ConfigService],
         }),
         AuthModule,
