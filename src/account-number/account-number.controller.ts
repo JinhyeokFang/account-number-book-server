@@ -5,8 +5,8 @@ import {
     Get,
     HttpException,
     HttpStatus,
+    Param,
     Post,
-    Query,
     Req,
     UseGuards,
 } from '@nestjs/common';
@@ -41,7 +41,7 @@ export class AccountNumberController {
     }
 
     @UseGuards(JwtGuard)
-    @Post('/')
+    @Get('/')
     async getAccounts(@Req() request) {
         if (request.user == null)
             throw new HttpException({}, HttpStatus.UNAUTHORIZED);
@@ -57,7 +57,7 @@ export class AccountNumberController {
 
     @UseGuards(JwtGuard)
     @Delete('/:id')
-    async deleteAccount(@Req() request, @Query('id') id) {
+    async deleteAccount(@Req() request, @Param('id') id) {
         if (request.user == null)
             throw new HttpException({}, HttpStatus.UNAUTHORIZED);
 
@@ -66,7 +66,7 @@ export class AccountNumberController {
         const account = await this.accountNumberService.findAccount(id);
 
         if (account === null) throw new HttpException({}, HttpStatus.NOT_FOUND);
-        if (account.kakaoId !== kakaoId)
+        if (account.kakaoId != kakaoId)
             throw new HttpException({}, HttpStatus.FORBIDDEN);
 
         await this.accountNumberService.remove(id);
