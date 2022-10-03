@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 
 import * as compression from 'compression';
+import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -11,6 +12,7 @@ async function bootstrap() {
     const configService: ConfigService = app.get(ConfigService);
     app.use(compression());
     app.use(helmet());
+    app.use(cookieParser());
     app.enableCors();
 
     const config = new DocumentBuilder()

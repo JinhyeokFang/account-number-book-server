@@ -1,11 +1,23 @@
-import { Controller, Get, HttpStatus, Req, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    HttpStatus,
+    Redirect,
+    Req,
+    Res,
+    UseGuards,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import KakaoGuard from './guards/kakao.guard';
 import Payload from './payload';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+    constructor(
+        private authService: AuthService,
+        private configService: ConfigService,
+    ) {}
 
     @Get('/login')
     @UseGuards(KakaoGuard)
@@ -15,8 +27,18 @@ export class AuthController {
 
     @Get('/redirect')
     @UseGuards(KakaoGuard)
-    async redirect(@Req() request) {
+    @Redirect('https://url.jinhy.uk', 302)
+    async redirect(@Req() request, @Res({ passthrough: true }) response) {
         const token = await this.authService.login(request.user as Payload);
-        return { token };
+        response.cookie('token', token);
+        return {
+            url: this.configService.get('REDIRECT_URL'),
+        };
+    }
+
+    @Get('/token')
+    async getToken(@Req() request) {
+        const cookieData: string | undefined = request.cookies['token'];
+        return cookieData === undefined ? null : cookieData;
     }
 }
