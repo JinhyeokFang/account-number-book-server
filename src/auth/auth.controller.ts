@@ -39,6 +39,8 @@ export class AuthController {
     @Get('/token')
     async getToken(@Req() request) {
         const cookieData: string | undefined = request.cookies['token'];
-        return cookieData === undefined ? null : cookieData;
+        return {
+            data: cookieData === undefined ? null : cookieData,
+        };
     }
 }
