@@ -13,7 +13,9 @@ async function bootstrap() {
     app.use(compression());
     app.use(helmet());
     app.use(cookieParser());
-    app.enableCors();
+    app.enableCors({
+        origin: 'http://direct.saintdev.kr:8444',
+    });
 
     const config = new DocumentBuilder()
         .setTitle('API')
